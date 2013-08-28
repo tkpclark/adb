@@ -273,6 +273,10 @@ int build_path(char* buff, size_t len, const char* format, const char* home)
 /* fills buff with the path to the adb vendor id file. returns 0 if success */
 int get_adb_usb_ini(char* buff, size_t len)
 {
+	strcpy(buff,"../config/vendors");
+	return 0;
+
+
 #ifdef _WIN32
     const char* home = getenv("ANDROID_SDK_HOME");
     if (home != NULL) {

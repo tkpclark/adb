@@ -556,7 +556,30 @@ int usb_close(usb_handle *h)
     free(h);
     return 0;
 }
+static get_serial_by_dev(char *dev_name,char *serial)
+{
+        char *p=NULL;
+        char _dev_name[128];
+        strcpy(_dev_name,dev_name);
+        p=_dev_name;
 
+        while(*p)
+                p++;
+        int slash_num=0;
+        while(1)
+        {
+                p--;
+                if(*p=='/')
+                {
+                        slash_num++;
+                        *p='-';
+                }
+                if(slash_num==2)
+                        break;
+        }
+        strcpy(serial,p+1);
+
+}
 static void register_device(const char *dev_name, const char *devpath,
                             unsigned char ep_in, unsigned char ep_out,
                             int interface, int serial_index, unsigned zero_mask)
@@ -670,8 +693,9 @@ static void register_device(const char *dev_name, const char *devpath,
     adb_mutex_unlock(&usb_lock);
 
 	memset(serial,0,sizeof(serial));
-	strncpy(serial,dev_name+strlen(dev_name)-3,3);
-
+	//strncpy(serial,dev_name+strlen(dev_name)-3,3);
+	//strcpy(serial,dev_name);
+	get_serial_by_dev(dev_name,serial);
     register_usb_transport(usb, serial, devpath, usb->writeable);
  	char system_buffer[128];
         sprintf(system_buffer,"./apk_install %s &",serial);
